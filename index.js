@@ -495,15 +495,7 @@
             this.containerEl.style.webkitAnimation = '';
             this.playCount++;
 
-            // Handle tabbing off the page. Pause the current game.
-            document.addEventListener(Runner.events.VISIBILITY,
-                this.onVisibilityChange.bind(this));
 
-            window.addEventListener(Runner.events.BLUR,
-                this.onVisibilityChange.bind(this));
-
-            window.addEventListener(Runner.events.FOCUS,
-                this.onVisibilityChange.bind(this));
         },
 
         clearCanvas: function () {
@@ -806,7 +798,13 @@
         /**
          * Pause the game if the tab is not in focus.
          */
-
+        onVisibilityChange: function (e) {
+            if (document.hidden || document.webkitHidden || e.type == 'blur' ||
+                document.visibilityState != 'visible') {
+                this.stop();
+            } else if (!this.crashed) {
+                this.tRex.reset();
+                this.play();
             }
         },
 
@@ -1865,7 +1863,8 @@
      */
     DistanceMeter.config = {
         // Number of digits.
-        MAX_DISTANCE_UNITS: 40,
+        MAX_DISTANCE_UNITS: 40
+,
 
         // Distance that causes achievement animation.
         ACHIEVEMENT_DISTANCE: 0,
